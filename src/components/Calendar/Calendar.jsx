@@ -31,14 +31,12 @@ const localizer = dateFnsLocalizer({
 
 const DnDCalendar = withDragAndDrop(BigCalendar);
 
-const initialState = {
-  isModalOpen: false,
-  selectedSlot: undefined,
-  meetings: [],
-};
-
-export const Calendar = () => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+export const Calendar = ({ meetings }) => {
+  const [state, dispatch] = useReducer(reducer, {
+    isModalOpen: false,
+    selectedSlot: undefined,
+    meetings,
+  });
 
   const onSelectSlot = (e) => {
     dispatch({
