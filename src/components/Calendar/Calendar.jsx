@@ -13,6 +13,7 @@ import getDay from "date-fns/getDay";
 import { enUS, fr } from "date-fns/locale";
 
 import { MeetingModal } from "../MeetingModal";
+import { reducer } from "./calendar.reducer";
 
 const locales = {
   "en-US": enUS,
@@ -28,31 +29,6 @@ const localizer = dateFnsLocalizer({
 });
 
 const DnDCalendar = withDragAndDrop(BigCalendar);
-
-const reducer = (state, action) => {
-  switch (action.type) {
-    case "select_slot":
-      return {
-        ...state,
-        isModalOpen: true,
-        isEditing: true,
-        meeting: action.payload.meeting,
-      };
-    case "save_meeting":
-      return {
-        ...state,
-        isModalOpen: true,
-        isEditing: false,
-      };
-    case "close_modal":
-      return {
-        ...state,
-        isModalOpen: false,
-      };
-    default:
-      return state;
-  }
-};
 
 const initialState = {
   isModalOpen: false,
