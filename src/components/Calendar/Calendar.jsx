@@ -12,6 +12,7 @@ import startOfWeek from "date-fns/startOfWeek";
 import getDay from "date-fns/getDay";
 import { enUS, fr } from "date-fns/locale";
 
+import { addMeeting, formatToApi, formatToClient } from "../../utils/api";
 import { MeetingModal } from "../MeetingModal";
 import { reducer } from "./calendar.reducer";
 
@@ -33,7 +34,9 @@ const DnDCalendar = withDragAndDrop(BigCalendar);
 const initialState = {
   isModalOpen: false,
   selectedSlot: undefined,
+  meetings: [],
 };
+
 export const Calendar = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -56,23 +59,31 @@ export const Calendar = () => {
   const closeModal = () => {
     dispatch({ type: "close_modal" });
   };
+
   const handleSubmit = (values) => {
-    console.log("handle submit :", values);
-    dispatch({ type: "save_meeting" });
+    const meeting = formatToApi(values);
+    addMeeting({ meeting }).then(({ data }) => {
+      dispatch({
+        type: "save_meeting",
+        payload: {
+          meeting: formatToClient(data),
+        },
+      });
+    });
   };
 
   return (
     <Fragment>
       <MeetingModal
         isOpen={state.isModalOpen}
-        meeting={state.meeting}
+        meeting={state.selectedSlot}
         onCancel={closeModal}
         onSave={handleSubmit}
         isEditing={state.isEditing}
       />
       <DnDCalendar
         localizer={localizer}
-        events={[]}
+        events={state.meetings}
         selectable
         resizable
         defaultDate={new Date()}

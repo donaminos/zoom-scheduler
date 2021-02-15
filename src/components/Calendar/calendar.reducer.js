@@ -5,13 +5,14 @@ export const reducer = (state, action) => {
         ...state,
         isModalOpen: true,
         isEditing: true,
-        meeting: action.payload.meeting,
+        selectedSlot: action.payload.meeting,
       };
     case "save_meeting":
       return {
         ...state,
         isModalOpen: true,
         isEditing: false,
+        meetings: [...state.meetings, action.payload.meeting],
       };
     case "close_modal":
       return {
