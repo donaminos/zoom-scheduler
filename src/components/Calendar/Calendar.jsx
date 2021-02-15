@@ -12,7 +12,12 @@ import startOfWeek from "date-fns/startOfWeek";
 import getDay from "date-fns/getDay";
 import { enUS, fr } from "date-fns/locale";
 
-import { addMeeting, formatToApi, formatToClient } from "../../utils/api";
+import {
+  addMeeting,
+  formatToApi,
+  formatToClient,
+  editMeeting,
+} from "../../utils/api";
 import { MeetingModal } from "../MeetingModal";
 import { reducer } from "./calendar.reducer";
 
@@ -46,10 +51,18 @@ export const Calendar = ({ meetings }) => {
       },
     });
   };
+  const onDoubleClickEvent = (e) => {
+    dispatch({
+      type: "edit_meeting",
+      payload: {
+        meeting: e,
+      },
+    });
+  };
 
   const onEventDrop = (e) => console.log("onEventDrop >> ", e);
-  const onEventResize = (e) => console.log("onEventResize >> ", e);
   const onDragStart = (e) => console.log("onDragStart >> ", e);
+  const onEventResize = (e) => console.log("onEventResize >> ", e);
   const dragFromOutsideItem = (e) => console.log("dragFromOutsideItem >> ", e);
   const onDropFromOutside = (e) => console.log("onDropFromOutside >> ", e);
   const handleDragStart = (e) => console.log("handleDragStart >> ", e);
@@ -58,13 +71,25 @@ export const Calendar = ({ meetings }) => {
     dispatch({ type: "close_modal" });
   };
 
-  const handleSubmit = (values) => {
+  const handleAdd = (values) => {
     const meeting = formatToApi(values);
     addMeeting({ meeting }).then(({ data }) => {
       dispatch({
-        type: "save_meeting",
+        type: "save_meeting_success",
         payload: {
           meeting: formatToClient(data),
+        },
+      });
+    });
+  };
+
+  const handleUpdate = (values) => {
+    const meeting = formatToApi(values);
+    editMeeting({ meeting }).then(() => {
+      dispatch({
+        type: "edit_meeting_success",
+        payload: {
+          meeting: formatToClient(meeting),
         },
       });
     });
@@ -76,7 +101,7 @@ export const Calendar = ({ meetings }) => {
         isOpen={state.isModalOpen}
         meeting={state.selectedSlot}
         onCancel={closeModal}
-        onSave={handleSubmit}
+        onSave={state.selectedSlot?.id ? handleUpdate : handleAdd}
         isEditing={state.isEditing}
       />
       <DnDCalendar
@@ -87,6 +112,7 @@ export const Calendar = ({ meetings }) => {
         defaultDate={new Date()}
         defaultView={Views.WEEK}
         views={[Views.WEEK]}
+        onDoubleClickEvent={onDoubleClickEvent}
         onEventDrop={onEventDrop}
         onEventResize={onEventResize}
         onSelectSlot={onSelectSlot}

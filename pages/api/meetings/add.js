@@ -1,11 +1,15 @@
 import axios from "axios";
 
-import { options, ZOOM_API_ENDPOINT } from "./config";
+import { options, ZOOM_API_USERS_ENDPOINT } from "./config";
 
 export default (req, res) => {
   if (req.method === "POST" && req.body) {
     axios
-      .post(`${ZOOM_API_ENDPOINT}/meetings`, JSON.stringify(req.body), options)
+      .post(
+        `${ZOOM_API_USERS_ENDPOINT}/meetings`,
+        JSON.stringify(req.body),
+        options
+      )
       .then((response) => {
         res.status(200).json(response.data);
       })

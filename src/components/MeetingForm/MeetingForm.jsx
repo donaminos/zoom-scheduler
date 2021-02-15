@@ -32,7 +32,8 @@ export const MeetingForm = ({ meeting, onCancel, onSave }) => {
   return (
     <Formik
       initialValues={{
-        topic: "",
+        id: meeting?.id,
+        topic: meeting?.title || "",
         start: meeting?.start,
         end: meeting?.end,
       }}
@@ -47,6 +48,7 @@ export const MeetingForm = ({ meeting, onCancel, onSave }) => {
           name="topic"
           style={inputStyle}
         />
+        <Field disabled type="hidden" name="id" />
 
         <Field disabled name="date">
           {(field) => (

@@ -14,11 +14,20 @@ export const addMeeting = ({ meeting }) => {
   return axios.post(`${MEETING_ENDPOINT}/add`, JSON.stringify(meeting), config);
 };
 
+export const editMeeting = ({ meeting }) => {
+  return axios.patch(
+    `${MEETING_ENDPOINT}/edit`,
+    JSON.stringify(meeting),
+    config
+  );
+};
+
 export const formatToApi = (values) => {
   const duration = differenceInMinutes(values.end, values.start);
   const start_time = format(values.start, "yyyy-MM-dd'T'HH:mm:ss");
 
   return {
+    ...(values.id ? { id: values.id } : {}),
     topic: values.topic || "Untitled",
     type: 2,
     start_time,
