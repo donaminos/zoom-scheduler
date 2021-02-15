@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment, useReducer } from "react";
 import {
   Calendar as BigCalendar,
   dateFnsLocalizer,
@@ -11,6 +11,8 @@ import parse from "date-fns/parse";
 import startOfWeek from "date-fns/startOfWeek";
 import getDay from "date-fns/getDay";
 import { enUS, fr } from "date-fns/locale";
+
+import { MeetingModal } from "../MeetingModal";
 
 const locales = {
   "en-US": enUS,
@@ -27,9 +29,45 @@ const localizer = dateFnsLocalizer({
 
 const DnDCalendar = withDragAndDrop(BigCalendar);
 
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "select_slot":
+      return {
+        ...state,
+        isModalOpen: true,
+        isEditing: true,
+        meeting: action.payload.meeting,
+      };
+    case "save_meeting":
+      return {
+        ...state,
+        isModalOpen: true,
+        isEditing: false,
+      };
+    case "close_modal":
+      return {
+        ...state,
+        isModalOpen: false,
+      };
+    default:
+      return state;
+  }
+};
+
+const initialState = {
+  isModalOpen: false,
+  selectedSlot: undefined,
+};
 export const Calendar = () => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
   const onSelectSlot = (e) => {
-    console.log("onSelectSlot >> ", e);
+    dispatch({
+      type: "select_slot",
+      payload: {
+        meeting: e,
+      },
+    });
   };
 
   const onEventDrop = (e) => console.log("onEventDrop >> ", e);
@@ -39,23 +77,40 @@ export const Calendar = () => {
   const onDropFromOutside = (e) => console.log("onDropFromOutside >> ", e);
   const handleDragStart = (e) => console.log("handleDragStart >> ", e);
 
+  const closeModal = () => {
+    dispatch({ type: "close_modal" });
+  };
+  const handleSubmit = (values) => {
+    console.log("handle submit :", values);
+    dispatch({ type: "save_meeting" });
+  };
+
   return (
-    <DnDCalendar
-      localizer={localizer}
-      events={[]}
-      selectable
-      resizable
-      defaultDate={new Date()}
-      defaultView={Views.WEEK}
-      views={[Views.WEEK]}
-      onEventDrop={onEventDrop}
-      onEventResize={onEventResize}
-      onSelectSlot={onSelectSlot}
-      onDragStart={onDragStart}
-      dragFromOutsideItem={dragFromOutsideItem}
-      onDropFromOutside={onDropFromOutside}
-      handleDragStart={handleDragStart}
-      style={{ width: "80vw", height: "80vh" }}
-    />
+    <Fragment>
+      <MeetingModal
+        isOpen={state.isModalOpen}
+        meeting={state.meeting}
+        onCancel={closeModal}
+        onSave={handleSubmit}
+        isEditing={state.isEditing}
+      />
+      <DnDCalendar
+        localizer={localizer}
+        events={[]}
+        selectable
+        resizable
+        defaultDate={new Date()}
+        defaultView={Views.WEEK}
+        views={[Views.WEEK]}
+        onEventDrop={onEventDrop}
+        onEventResize={onEventResize}
+        onSelectSlot={onSelectSlot}
+        onDragStart={onDragStart}
+        dragFromOutsideItem={dragFromOutsideItem}
+        onDropFromOutside={onDropFromOutside}
+        handleDragStart={handleDragStart}
+        style={{ width: "80vw", height: "80vh" }}
+      />
+    </Fragment>
   );
 };
