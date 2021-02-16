@@ -17,6 +17,6 @@ export default (req, res) => {
         res.status(500).send(`API call failed, reason : ${err.message} `);
       });
   } else {
-    throw "Bad request";
+    res.status(400).send("Bad request");
   }
 };

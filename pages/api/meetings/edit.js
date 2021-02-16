@@ -3,12 +3,10 @@ import axios from "axios";
 import { options, ZOOM_API_ENDPOINT } from "./config";
 
 export default (req, res) => {
-  if (req.method === "PATCH" && req.body) {
-    const meetingId = req.body.id;
-    console.log("meetingId >>> ", req.body);
+  if (req.method === "PATCH" && req.body && req.body.id) {
     return axios
       .patch(
-        `${ZOOM_API_ENDPOINT}/meetings/${meetingId}`,
+        `${ZOOM_API_ENDPOINT}/meetings/${req.body.id}`,
         JSON.stringify(req.body),
         options
       )
@@ -16,6 +14,6 @@ export default (req, res) => {
         res.status(204).send("updated");
       });
   } else {
-    throw "Bad request";
+    res.status(400).send("Bad request");
   }
 };
