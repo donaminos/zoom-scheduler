@@ -52,7 +52,11 @@ export const MeetingModal = ({
       {isEditing ? (
         <MeetingForm meeting={meeting} onCancel={onCancel} onSave={onSave} />
       ) : (
-        <Alert onClick={onCancel} message="Your meeting is saved" />
+        <Alert
+          onClick={onCancel}
+          message="Your meeting is saved"
+          meeting={meeting}
+        />
       )}
     </ReactModal>
   );

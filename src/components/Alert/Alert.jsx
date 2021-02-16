@@ -1,9 +1,10 @@
 import React from "react";
 
-export const Alert = ({ onClick, message }) => {
+export const Alert = ({ onClick, message, meeting }) => {
   return (
     <div>
       <h3>{message}</h3>
+      {meeting && meeting.url && <p>Url:&nbsp;{meeting.url}</p>}
       <button
         style={{
           width: "10rem",

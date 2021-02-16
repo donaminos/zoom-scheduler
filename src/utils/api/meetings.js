@@ -46,5 +46,6 @@ export const formatToClient = (apiValues) => {
     start: new Date(apiValues.start_time),
     end: endDate,
     title: apiValues.topic,
+    url: apiValues.join_url,
   };
 };
