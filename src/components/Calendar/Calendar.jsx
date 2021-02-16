@@ -19,7 +19,7 @@ import {
   editMeeting,
 } from "../../utils/api";
 import { MeetingModal } from "../MeetingModal";
-import { reducer } from "./calendar.reducer";
+import { reducer, ACTIONS } from "./calendar.reducer";
 
 const locales = {
   "en-US": enUS,
@@ -45,37 +45,31 @@ export const Calendar = ({ meetings }) => {
 
   const onSelectSlot = (e) => {
     dispatch({
-      type: "select_slot",
+      type: ACTIONS.SELECT_SLOT,
       payload: {
         meeting: e,
       },
     });
   };
+
   const onDoubleClickEvent = (e) => {
     dispatch({
-      type: "edit_meeting",
+      type: ACTIONS.EDIT_MEETING,
       payload: {
         meeting: e,
       },
     });
   };
 
-  const onEventDrop = (e) => console.log("onEventDrop >> ", e);
-  const onDragStart = (e) => console.log("onDragStart >> ", e);
-  const onEventResize = (e) => console.log("onEventResize >> ", e);
-  const dragFromOutsideItem = (e) => console.log("dragFromOutsideItem >> ", e);
-  const onDropFromOutside = (e) => console.log("onDropFromOutside >> ", e);
-  const handleDragStart = (e) => console.log("handleDragStart >> ", e);
-
   const closeModal = () => {
-    dispatch({ type: "close_modal" });
+    dispatch({ type: ACTIONS.CLOSE_MODAL });
   };
 
   const handleAdd = (values) => {
     const meeting = formatToApi(values);
     addMeeting({ meeting }).then(({ data }) => {
       dispatch({
-        type: "save_meeting_success",
+        type: ACTIONS.SAVE_MEETING_SUCCESS,
         payload: {
           meeting: formatToClient(data),
         },
@@ -87,7 +81,7 @@ export const Calendar = ({ meetings }) => {
     const meeting = formatToApi(values);
     editMeeting({ meeting }).then(() => {
       dispatch({
-        type: "edit_meeting_success",
+        type: ACTIONS.EDIT_MEETING_SUCCESS,
         payload: {
           meeting: formatToClient(meeting),
         },
@@ -112,14 +106,8 @@ export const Calendar = ({ meetings }) => {
         defaultDate={new Date()}
         defaultView={Views.WEEK}
         views={[Views.WEEK]}
-        onDoubleClickEvent={onDoubleClickEvent}
-        onEventDrop={onEventDrop}
-        onEventResize={onEventResize}
         onSelectSlot={onSelectSlot}
-        onDragStart={onDragStart}
-        dragFromOutsideItem={dragFromOutsideItem}
-        onDropFromOutside={onDropFromOutside}
-        handleDragStart={handleDragStart}
+        onDoubleClickEvent={onDoubleClickEvent}
         style={{ width: "80vw", height: "80vh" }}
       />
     </Fragment>
